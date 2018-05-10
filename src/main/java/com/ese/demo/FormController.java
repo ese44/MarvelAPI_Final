@@ -19,16 +19,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// class for controlling calls to the server
 @Controller
 public class FormController {
 
-    API_Links Links = new API_Links();
-    private Marvel initialData = findChar("spider-man");
+    API_Links Links = new API_Links(); // create a link object to access the api links
+    private Marvel initialData = findChar("spider-man"); // marvel data access api attribution
 
-    private UserSearch finalInput;
-    private Marvel marvelChar;
+    private UserSearch finalInput; // user search object
+    private Marvel marvelChar; // marvel object to hold character data
 
 
+    // mapping control for the home page
     @RequestMapping("/")
     public ModelAndView addSearch(Model model) {
 
@@ -39,7 +41,7 @@ public class FormController {
         return new ModelAndView("index.html", "search", new UserSearch());
     }
 
-
+// mapping for the user entered search
     @RequestMapping(value = "/addSearch", method = RequestMethod.POST)
     public RedirectView addNewSearch(UserSearch userSearch) {
 
@@ -50,28 +52,28 @@ public class FormController {
         return new RedirectView(selectView);
     }
 
-
+// mapping for searching the api
     @RequestMapping("/search")
     public ModelAndView search(ModelMap modelMap) {
 
-        MarvelCharacter marvin = charGen();
+        MarvelCharacter marvin = charGen(); // call method to create the character object
 
-        String attributionText = initialData.getAttributionText();
+        String attributionText = initialData.getAttributionText(); // get the required attribution text
 
-        modelMap.addAttribute("attribution",attributionText);
-
-
-        modelMap.addAttribute("book", marvin.getBooks());
-        modelMap.addAttribute("link", marvin.getLinks());
+        modelMap.addAttribute("attribution",attributionText); // add attribution to the modelmap
 
 
-        modelMap.addAttribute("userEnteredSearch", marvin);
-        return new ModelAndView("search.html", modelMap);
+        modelMap.addAttribute("book", marvin.getBooks()); // add the list of books to the modelmap
+        modelMap.addAttribute("link", marvin.getLinks()); // add the list of links to the modelmap
+
+
+        modelMap.addAttribute("userEnteredSearch", marvin); // add the character object to the modelmap
+        return new ModelAndView("search.html", modelMap); // display the character data
     }
 
 
 
-
+    // mapping for displaying the failure page
     @RequestMapping("/fail")
     public String fail(Model model){
         return "fail.html";
@@ -80,13 +82,14 @@ public class FormController {
 
     private String verifySearch(String userSearch) {
 
+        // input validation
         if (userSearch.equals("") || userSearch.equals(" ")){return "/fail";}
 
         else {
 
-            marvelChar = findChar(userSearch);
+            marvelChar = findChar(userSearch); // call method to search the api
 
-            if (marvelChar.getData().getResults().size() == 0){return "/fail";}
+            if (marvelChar.getData().getResults().size() == 0){return "/fail";} // return empty character
             else {return "/search";}
 
         }
@@ -98,56 +101,61 @@ public class FormController {
 
 
 
-
+// method for finding the specific character
     private Marvel findChar(String userSearch) {
 
-        if (userSearch.contains(" ")){ userSearch = userSearch.replace(" ", "%20");}
+        String split = "%20"; // replace spaces in the character name with this string
 
-        String url = Links.getURL_UPPER() + userSearch + Links.getURL_LOWER();
+        if (userSearch.contains(" ")){ userSearch = userSearch.replace(" ", split);} // replace the spaces
 
-        Marvel marvelResult = accessMarvel(url);
+        String url = Links.getURL_UPPER() + userSearch + Links.getURL_LOWER(); // for the search url
+
+        Marvel marvelResult = accessMarvel(url); // call method to search the api with the specified url
 
         return marvelResult;
     }
 
 
-
+// method for getting the json from the marvel api
     private Marvel accessMarvel(String url) {
 
-        try{
+        try{ // get request using unirest then changing it to a json object
             HttpResponse<JsonNode> response = Unirest.get(url).asJson();
 
-            Gson gson = new Gson();
+            Gson gson = new Gson(); // new gson object
 
-            Marvel searchResults = gson.fromJson(response.getBody().toString(), Marvel.class);
+            Marvel searchResults = gson.fromJson(response.getBody().toString(), Marvel.class); // use gson to convert the json object to a marvel object
 
-            return searchResults;
+            return searchResults; // return the marvel object
 
 
         }catch (Exception j){return new Marvel();}
     }
 
 
+    // method for creating a marvel character object
     private MarvelCharacter charGen() {
 
-        String imgSize = "/standard_fantastic.jpg";
+        String imgSize = "/standard_fantastic.jpg"; // define the size of the image displayed
 
+        // get the select data about the character
         String charId = marvelChar.getData().getResults().get(0).getId().toString();
         String charName = marvelChar.getData().getResults().get(0).getName();
         String charDiscription = marvelChar.getData().getResults().get(0).getDescription();
         String charImage = marvelChar.getData().getResults().get(0).getThumbnail().getPath() + imgSize;
         ArrayList<String> moreInfo = linksListGen();
 
-        ComicDetails marvinBooks = accessBooks(charId);
+        ComicDetails marvinBooks = accessBooks(charId); // method to get comic book data
 
-        ArrayList<String> bookImages = bookListGen(marvinBooks);
+        ArrayList<String> bookImages = bookListGen(marvinBooks); // add the images from the comics to an arraylist
 
 
-        MarvelCharacter marvin = new MarvelCharacter(charName, charDiscription, charImage, bookImages, moreInfo);
+        MarvelCharacter marvin = new MarvelCharacter(charName, charDiscription, charImage, bookImages, moreInfo); // crate the character object
 
-        return marvin;
+        return marvin; // return the character
     }
 
+    // methoding for getting comicbooks for the specific character
     private ComicDetails accessBooks(String charID) {
 
         String url = Links.getID_URL_UPPER() + charID + Links.getID_URL_LOWER();
@@ -166,6 +174,7 @@ public class FormController {
     }
 
 
+    // method for creating the list of comicbooks
     private ArrayList<String> bookListGen(ComicDetails books) {
 
         String imgSize = "/portrait_xlarge.jpg";
@@ -182,7 +191,7 @@ public class FormController {
         return bookList;
     }
 
-
+// method for getting the three links for more data
     private ArrayList<String> linksListGen() {
         ArrayList<String> moreLinks = new ArrayList<String>();
 

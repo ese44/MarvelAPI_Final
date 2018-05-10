@@ -2,6 +2,7 @@ package com.ese.demo;
 
 import java.util.ArrayList;
 
+// class for holding the data to display in the html
 public class MarvelCharacter {
 
     private String name;
