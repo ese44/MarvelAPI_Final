@@ -27,3 +27,5 @@ https://www.thymeleaf.org
 https://springframework.guru
 
 https://trendytheme.net/20-best-free-html-resume-templates-to-download/
+
+https://github.com/google/gson/blob/master/UserGuide.md
