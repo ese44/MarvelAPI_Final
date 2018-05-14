@@ -1,3 +1,5 @@
+http://127.0.0.1:8080
+
 This is my app for accessing the Marvel API.
 There are two classes that the JSON data is converted into:
 Marvels and ComicDetails. These classes contain all the data used in the app.
@@ -27,3 +29,5 @@ https://www.thymeleaf.org
 https://springframework.guru
 
 https://trendytheme.net/20-best-free-html-resume-templates-to-download/
+
+https://github.com/google/gson/blob/master/UserGuide.md
