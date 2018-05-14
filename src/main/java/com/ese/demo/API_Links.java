@@ -4,12 +4,12 @@ package com.ese.demo;
 public class API_Links {
 
     //link for searching by character name
-    private String URL_UPPER = "http://gateway.marvel.com/v1/public/characters?name=";
-    private String URL_LOWER = "&orderBy=name&ts=1&apikey=b6168abc18f41d92a4032fd954126073&hash=2d26ade77e6a23a22efa12c748635dca";
+    private String URL_UPPER = System.getenv("urlUpper");
+    private String URL_LOWER = System.getenv("urlLower");
 
     //link for searching comics by character id
-    private String ID_URL_UPPER = "https://gateway.marvel.com/v1/public/characters/";
-    private String ID_URL_LOWER = "/comics?limit=10&ts=1&apikey=b6168abc18f41d92a4032fd954126073&hash=2d26ade77e6a23a22efa12c748635dca";
+    private String ID_URL_UPPER = System.getenv("idUrlUpper");
+    private String ID_URL_LOWER = System.getenv("idUrlLower");
 
     // constructor
     public API_Links() {}
